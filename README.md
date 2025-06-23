@@ -24,7 +24,6 @@
 ### 1. Backend
 - **Java Classes:**
   - `DBConnection.java`: Manages database connections and SQL queries.
-  - `DiaryDAO.java`: Handles CRUD operations for diary entries.
   - `TestDBConnection.java`: Utility class for testing database connectivity.
 
 ### 2. Web Interface
