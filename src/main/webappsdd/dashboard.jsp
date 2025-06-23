@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<%
+    // Check if user is logged in
+    String username = (String) session.getAttribute("username");
+    if (username == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 <div class="main-container">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -41,15 +49,7 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="content-wrapper">
-        <%
-    // Check if user is logged in
-    String username = (String) session.getAttribute("username");
-    if (username == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-%>
+<div class="content-wrapper">
 
 <!-- Header section - replace the header in your dashboard.jsp -->
 <header class="header">

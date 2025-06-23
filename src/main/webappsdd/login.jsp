@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <%
     // Check if user is already logged in
     String loggedInUser = (String) session.getAttribute("username");
@@ -45,22 +46,25 @@
                 <p class="login-subtitle">Welcome back to your personal space</p>
             </div>
             
-            <form class="login-form" action="loginProcess.jsp" method="post">
-                <div class="form-group">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" name="username" class="form-input" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-input"  required>
-                </div>
-                 <!-- Demo Credentials -->
+            <form action="loginProcess.jsp" method="post" class="login-form">
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-input" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Sign In</button>
+        </form>
+        
+        <!-- Demo Credentials 
         <div class="demo-info">
             <p><strong>Demo Credentials:</strong></p>
             <p>Username: <code>user</code></p>
-            <p>Password: <code>password123</code></p>
-        </div>
+            <p>Password: <code>password123</code></p>-->
                 <div class="form-options">
                     <label class="checkbox-label">
                         <input type="checkbox" name="remember" class="checkbox">
@@ -68,12 +72,9 @@
                     </label>
                     <a href="#" class="forgot-link">Forgot Password?</a>
                 </div>
-                
-                <button type="submit" class="login-btn">Sign In</button>
-            </form>
             
             <div class="login-footer">
-                <p class="signup-text">Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+               <p>Don't have an account? <a href="Signup.jsp">Sign up here</a></p>
             </div>
         </div>
     </div>

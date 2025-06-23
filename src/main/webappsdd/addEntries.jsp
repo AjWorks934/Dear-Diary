@@ -1,13 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="com.deardiary.DBConnection" %>
 <%
-    // Check if user is logged in
+// Check if user is logged in
     String username = (String) session.getAttribute("username");
-   if (username == null) {
-       response.sendRedirect("login.jsp");
-       return;
-   }
+    Integer userId = (Integer) session.getAttribute("userId");
+    if (username == null || userId == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
    
     String message = "";
     String messageType = "";
@@ -16,37 +22,43 @@
     if ("POST".equals(request.getMethod())) {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String date = request.getParameter("date");        
+        String date = request.getParameter("date");     
+        
         // Validate inputs
         if (title != null && !title.trim().isEmpty() && 
             content != null && !content.trim().isEmpty() && 
             date != null && !date.trim().isEmpty()) {
             
-            // Get existing entries from session
-            List<Map<String, String>> entries = (List<Map<String, String>>) session.getAttribute("diaryEntries");
-            if (entries == null) {
-                entries = new ArrayList<>();
+        try (Connection conn = com.deardiary.DBConnection.getConnection();
+     		PreparedStatement stmt = conn.prepareStatement("INSERT INTO diary_entries (user_id, title, content, created_at) VALUES (?, ?, ?, ?)")) {
+                
+    		stmt.setInt(1, userId); // Set user_id (logged-in user's ID)
+			stmt.setString(2, title.trim()); // Set title
+			stmt.setString(3, content.trim()); // Set content
+			stmt.setDate(4, Date.valueOf(date)); // Set created_at
+
+                
+                int result = stmt.executeUpdate();
+                
+                if (result > 0) {
+                    message = "Entry saved successfully!";
+                    messageType = "success";
+                    
+                    // Clear form fields after successful submission
+                    title = "";
+                    content = "";
+                    date = "";
+                } else {
+                    message = "Failed to save entry. Please try again.";
+                    messageType = "error";
+                }
+                
+            } catch (Exception e) {
+            out.println("Debug Info: " + e.getMessage());            
+                e.printStackTrace();
+                message = "Error saving entry. Please try again.";
+                messageType = "error";
             }
-            
-            // Create new entry
-            Map<String, String> newEntry = new HashMap<>();
-            newEntry.put("id", String.valueOf(System.currentTimeMillis())); // Use timestamp as ID
-            newEntry.put("title", title.trim());
-            newEntry.put("content", content.trim());
-            newEntry.put("date", date);            
-            // Add to beginning of list (newest first)
-            entries.add(0, newEntry);
-            
-            // Save back to session
-            session.setAttribute("diaryEntries", entries);
-            
-            message = "Entry saved successfully!";
-            messageType = "success";
-            
-            // Clear form fields after successful submission
-            title = "";
-            content = "";
-            date = "";
             
         } else {
             message = "Please fill in all required fields.";
@@ -56,9 +68,8 @@
     
     // Get current date for default value
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    String currentDate = sdf.format(new Date());
+	String currentDate = sdf.format(new java.util.Date());
 %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
